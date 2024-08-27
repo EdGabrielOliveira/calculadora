@@ -1,113 +1,186 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import React, { useState } from "react";
+
+const App: React.FC = () => {
+  const [display, setDisplay] = useState<string>("");
+  const [operacaoEmAndamento, setOperacaoEmAndamento] = useState<boolean>(false);
+
+  const addNumber = (input: string) => {
+    if (operacaoEmAndamento) {
+      if (["+", "-", "*", "/"].includes(input)) {
+        // Adiciona o operador após o resultado da operação anterior, preservando o resultado
+        const ultimoCaractere = display.charAt(display.length - 1);
+        if (["+", "-", "*", "/"].includes(ultimoCaractere)) {
+          // Se o último caractere também é um operador, substitui-o pelo novo operador
+          setDisplay((prevDisplay) => prevDisplay.slice(0, -1) + " " + input + " ");
+        } else {
+          // Adiciona o operador normalmente
+          setDisplay((prevDisplay) => prevDisplay + " " + input + " ");
+        }
+      } else {
+        // Adiciona um número após o resultado
+        setDisplay(input);
+        setOperacaoEmAndamento(false);
+      }
+    } else {
+      const ultimoCaractere = display.charAt(display.length - 1);
+      if (
+        ["+", "-", "*", "/"].includes(input) &&
+        ["+", "-", "*", "/"].includes(ultimoCaractere)
+      ) {
+        // Se o último caractere é um operador e o novo caractere também é um operador, substitui o operador
+        setDisplay((prevDisplay) => prevDisplay.slice(0, -1) + " " + input + " ");
+      } else {
+        // Adiciona o número ou operador normalmente
+        setDisplay((prevDisplay) => prevDisplay + input);
+      }
+    }
+  };
+
+  const calcular = () => {
+    try {
+      // Calcula a expressão atual
+      const resultado = eval(display.replace(/[^-()\d/*+.]/g, "")); // Remove caracteres inválidos
+      if (typeof resultado === "number" && !isNaN(resultado)) {
+        setDisplay(resultado.toString());
+        setOperacaoEmAndamento(true);
+      } else {
+        setDisplay("Erro");
+        setOperacaoEmAndamento(true);
+      }
+    } catch {
+      setDisplay("Erro");
+      setOperacaoEmAndamento(true);
+    }
+  };
+
+  const clear = () => {
+    setDisplay("");
+    setOperacaoEmAndamento(false);
+  };
+
+  const delet = () => {
+    setDisplay((prevDisplay) => {
+      // Remove o último caractere, considerando se é um espaço adicional
+      const novoDisplay = prevDisplay.slice(0, -1);
+      return novoDisplay.endsWith(" ") ? novoDisplay.slice(0, -1) : novoDisplay;
+    });
+  };
+
+  const elevarAoQuadrado = () => {
+    try {
+      const resultado = eval(display.replace(/[^-()\d/*+.]/g, "")); // Remove caracteres inválidos
+      if (typeof resultado === "number" && !isNaN(resultado)) {
+        setDisplay((resultado ** 2).toString());
+        setOperacaoEmAndamento(true);
+      } else {
+        setDisplay("Erro");
+        setOperacaoEmAndamento(true);
+      }
+    } catch {
+      setDisplay("Erro");
+      setOperacaoEmAndamento(true);
+    }
+  };
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
+    <main className="flex flex-col justify-center items-center gap-10 pt-32">
+      <div className="bg-gray-200 w-[30rem] p-10 rounded-lg">
+        <div className="flex flex-col justify-center items-center gap-4">
+          <div>
+            <input
+              className="w-[26rem] h-[5rem] rounded-xl bg-gray-400 text-end p-10 text-4xl font-semibold"
+              type="text"
+              value={display}
+              readOnly
             />
-          </a>
+          </div>
+          <div className="flex flex-row">
+            <div className="grid-flow-col grid-cols-3 space-y-2">
+              <div className="flex gap-2">
+                <button className="button-calc" onClick={elevarAoQuadrado}>
+                  x²
+                </button>
+                <button className="button-calc" onClick={clear}>
+                  C
+                </button>
+                <button className="button-calc" onClick={delet}>
+                  DEL
+                </button>
+              </div>
+              <div className="flex gap-2">
+                <button className="button-calc" onClick={() => addNumber("7")}>
+                  7
+                </button>
+                <button className="button-calc" onClick={() => addNumber("8")}>
+                  8
+                </button>
+                <button className="button-calc" onClick={() => addNumber("9")}>
+                  9
+                </button>
+              </div>
+              <div className="flex gap-2">
+                <button className="button-calc" onClick={() => addNumber("4")}>
+                  4
+                </button>
+                <button className="button-calc" onClick={() => addNumber("5")}>
+                  5
+                </button>
+                <button className="button-calc" onClick={() => addNumber("6")}>
+                  6
+                </button>
+              </div>
+              <div className="flex gap-2">
+                <button className="button-calc" onClick={() => addNumber("1")}>
+                  1
+                </button>
+                <button className="button-calc" onClick={() => addNumber("2")}>
+                  2
+                </button>
+                <button className="button-calc" onClick={() => addNumber("3")}>
+                  3
+                </button>
+              </div>
+              <div className="flex gap-2">
+                <button className="button-calc" onClick={() => addNumber(".")}>
+                  .
+                </button>
+                <button className="button-calc" onClick={() => addNumber("0")}>
+                  0
+                </button>
+                <button className="button-calc" onClick={() => addNumber("%")}>
+                  %
+                </button>
+              </div>
+            </div>
+            <div>
+              <div className="flex flex-col gap-2 pl-2">
+                <button className="button-log" onClick={() => addNumber("/")}>
+                  /
+                </button>
+                <button className="button-log" onClick={() => addNumber("*")}>
+                  x
+                </button>
+                <button className="button-log" onClick={() => addNumber("-")}>
+                  -
+                </button>
+                <button className="button-log" onClick={() => addNumber("+")}>
+                  +
+                </button>
+                <button
+                  className="button-log bg-blue-500 hover:bg-blue-600"
+                  onClick={calcular}
+                >
+                  =
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
       </div>
     </main>
   );
-}
+};
+
+export default App;
