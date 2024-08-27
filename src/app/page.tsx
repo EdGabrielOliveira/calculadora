@@ -9,17 +9,13 @@ const App: React.FC = () => {
   const addNumber = (input: string) => {
     if (operacaoEmAndamento) {
       if (["+", "-", "*", "/"].includes(input)) {
-        // Adiciona o operador após o resultado da operação anterior, preservando o resultado
         const ultimoCaractere = display.charAt(display.length - 1);
         if (["+", "-", "*", "/"].includes(ultimoCaractere)) {
-          // Se o último caractere também é um operador, substitui-o pelo novo operador
           setDisplay((prevDisplay) => prevDisplay.slice(0, -1) + " " + input + " ");
         } else {
-          // Adiciona o operador normalmente
           setDisplay((prevDisplay) => prevDisplay + " " + input + " ");
         }
       } else {
-        // Adiciona um número após o resultado
         setDisplay(input);
         setOperacaoEmAndamento(false);
       }
@@ -29,10 +25,8 @@ const App: React.FC = () => {
         ["+", "-", "*", "/"].includes(input) &&
         ["+", "-", "*", "/"].includes(ultimoCaractere)
       ) {
-        // Se o último caractere é um operador e o novo caractere também é um operador, substitui o operador
         setDisplay((prevDisplay) => prevDisplay.slice(0, -1) + " " + input + " ");
       } else {
-        // Adiciona o número ou operador normalmente
         setDisplay((prevDisplay) => prevDisplay + input);
       }
     }
@@ -40,8 +34,7 @@ const App: React.FC = () => {
 
   const calcular = () => {
     try {
-      // Calcula a expressão atual
-      const resultado = eval(display.replace(/[^-()\d/*+.]/g, "")); // Remove caracteres inválidos
+      const resultado = eval(display.replace(/[^-()\d/*+.]/g, ""));
       if (typeof resultado === "number" && !isNaN(resultado)) {
         setDisplay(resultado.toString());
         setOperacaoEmAndamento(true);
@@ -62,7 +55,6 @@ const App: React.FC = () => {
 
   const delet = () => {
     setDisplay((prevDisplay) => {
-      // Remove o último caractere, considerando se é um espaço adicional
       const novoDisplay = prevDisplay.slice(0, -1);
       return novoDisplay.endsWith(" ") ? novoDisplay.slice(0, -1) : novoDisplay;
     });
@@ -70,7 +62,7 @@ const App: React.FC = () => {
 
   const elevarAoQuadrado = () => {
     try {
-      const resultado = eval(display.replace(/[^-()\d/*+.]/g, "")); // Remove caracteres inválidos
+      const resultado = eval(display.replace(/[^-()\d/*+.]/g, ""));
       if (typeof resultado === "number" && !isNaN(resultado)) {
         setDisplay((resultado ** 2).toString());
         setOperacaoEmAndamento(true);
