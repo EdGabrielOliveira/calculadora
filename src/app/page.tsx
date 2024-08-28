@@ -11,10 +11,11 @@ const App: React.FC = () => {
       if (["+", "-", "*", "/"].includes(input)) {
         const ultimoCaractere = display.charAt(display.length - 1);
         if (["+", "-", "*", "/"].includes(ultimoCaractere)) {
-          setDisplay((prevDisplay) => prevDisplay.slice(0, -1) + " " + input + " ");
+          setDisplay((prevDisplay) => prevDisplay.slice(0, -1) + input);
         } else {
-          setDisplay((prevDisplay) => prevDisplay + " " + input + " ");
+          setDisplay((prevDisplay) => prevDisplay + input);
         }
+        setOperacaoEmAndamento(false);
       } else {
         setDisplay(input);
         setOperacaoEmAndamento(false);
@@ -25,7 +26,7 @@ const App: React.FC = () => {
         ["+", "-", "*", "/"].includes(input) &&
         ["+", "-", "*", "/"].includes(ultimoCaractere)
       ) {
-        setDisplay((prevDisplay) => prevDisplay.slice(0, -1) + " " + input + " ");
+        setDisplay((prevDisplay) => prevDisplay.slice(0, -1) + input);
       } else {
         setDisplay((prevDisplay) => prevDisplay + input);
       }
